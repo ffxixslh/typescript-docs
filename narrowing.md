@@ -28,7 +28,7 @@ function padLeft(padding: number | string, input: string) {
 
 TypeScript warning us that adding a `number | string` to `number` might not give us what we want. In other words, we haven't explicitly checked if `padding` is a `number` first, nor are we handling the case where it's a `string`.
 
-### typeof Type Guard
+### Typeof Type Guard
 
 ```ts
 function padLeft(padding: number | string, input: string) {
