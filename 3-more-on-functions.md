@@ -438,3 +438,189 @@ const user = {
 ```
 
 TypeScript understands that the function `user.becomeAdmin` has a corresponding `this` which is the outer object `user`. `this` can be enough for a lot of cases, but there are a lot of cases where you need more control over what object `this` represents, and so TypeScript uses that syntax space to let you declare the type for `this` in the function body.
+
+```ts
+interface DB {
+  filterUsers(filter: (this: User) => boolean): User[]
+}
+
+const db = getDB()
+const admins = db.filterUsers(function (this: User) {
+  return this.admin
+})
+```
+
+This pattern is common with callback-style APIS, where another object typically controls when your function is called. Note that you need to use `function` and not arrow functions to get this behavior:
+
+```ts
+interface DB {
+  filterUsers(filter: (this: User) => boolean): User[]
+}
+
+const db = getDB()
+const admins = db.filterUsers(() => this.admin)
+//                                  ^~~~ ~~~~~
+// The containing arrow function captures the global value of 'this'.
+// Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+```
+
+### Other Types to Know About
+
+#### void
+
+`void` represents the return value of functions which don't return a value.
+
+In JavaScript, a function that doesn't return any value will implicitly return the value `undefined`. However, `void` and `undefined` are not the same thing in TypeScript.
+
+> `void` is not the same as `undefined`.
+
+#### object
+
+The special type `object` refers to any value that isn't a primitive(`string`, `number`, `boolean`, `symbol`, `null`, or `undefined`). This is different from the _empty_ type `{}`, and also different from the global type `Object`. It's very likely you will never use `Object`.
+
+> `object` is not `Object`. _Always_ use `object`!
+
+#### unknown
+
+The `unknown` type represents _any_ value. This is similar to `any` type, but is safer because it's not legal to do anything with an `unknown` value:
+
+```ts
+function f1(a: any) {
+  a.b() // OK
+}
+
+function f2(a: unknown) {
+  a.b()
+  //^
+  // Object is of type 'unknown'.
+}
+```
+
+This is useful when describing function types because you can describe functions that accept any value without having `any` values in your function body.
+
+#### never
+
+the `never` type represents values which are _never_ observed. In a return type, this means that the function throw an exception or terminates execution fof the program.
+
+**`never` also appears when TypeScript determines there's nothing left in a union.**
+
+#### Function
+
+The global type `Function` describes properties like `bind`, `call`, `apply`, and others present on all function values in JavaScript. it also has the special property that values of the `Function` can always be called; these calls return `any`.
+
+```ts
+function doSomething(f: Function) {
+  return f(1, 2, 3)
+}
+// The return type of `doSomething` is any.
+// Use `() => void` is more safer than `Function`.
+```
+
+### Rest Parameters and Arguments
+
+### Rest Parameters
+
+In addition to using optional parameters or overloads to make functions that can accept a variety of fixed argument counts, we can also define functions that take an _unbounded_ number of arguments using _rest_ parameters.
+
+A rest parameter appears after all other parameters, and uses the `...` syntax.
+
+```ts
+function multiply(n: number, ...m: number[]) {
+  return m.map((x) => n * x)
+}
+// 'a' gets value [10, 20, 30, 40]
+const a = multiply(10, 1, 2, 3, 4)
+```
+
+In TypeScript, the type annotation on these parameters is implicitly `any[]` instead of `any`, and any type annotation given must be of the form `Array<T>` or `T[]`, or a tuple type.
+
+#### Rest Arguments
+
+TypeScript does not assume that arrays are immutable. This can lead to some surprising behavior:
+
+```ts
+// Inferred type is number [] -- "an array with zero or more numbers",
+// not specifically two numbers
+const args = [8, 5]
+const angle = Math.atan2(...args)
+//                       ^~~
+// A spread argument must either have a tuple type or be passed to a rest parameter.
+```
+
+The best fix for this situation depends a bit on your code, but in general a `const` context is the most straightforward solution:
+
+```ts
+// Inferred as 2-length tuple
+const args = [8, 5] as const
+// OK
+const angle = Math.atan2(...args)
+```
+
+Using rest arguments may require turning on downlevelIteration when targeting older runtimes.
+
+### Parameter Destructuring
+
+You can use parameter destructuring to conveniently unpack objects provided as an argument into one or more local variables in the function body. In JavaScript, it looks like this:
+
+```js
+function sum({ a, b, c }) {
+  console.log(a + b + c)
+}
+sum({ a: 10, b: 3, c: 9 })
+```
+
+The type annotation for the object goes after the destructuring syntax:
+
+```ts
+function sum({ a, b, c }): { a: number; b: number; c: number } {
+  console.log(a + b + c)
+}
+```
+
+This can look a bit verbose, but you can use a named type here as well:
+
+```ts
+// Same as prior example
+type ABC = { a: number; b: number; c: number }
+function sum({ a, b, c }: ABC) {
+  console.log(a + b + c)
+}
+```
+
+### Assignability of Functions
+
+#### Return type `void`
+
+Contextual typing with a return type of `void` does **not** force functions to **not** return something. Another way to say this is a contextual function type with a `void` return type (`type vf = () => void`), when implemented, can return _any_ other value, but it will be ignored.
+
+Thus, the following implementations of the type `() => void` are valid:
+
+```ts
+type voidFunc = () => void
+
+const f1: voidFunc = () => {
+  return true
+}
+
+const f2: voidFunc = () => true
+
+const f3: voidFunc = function () {
+  return true
+}
+```
+
+This behavior exists so that the following code is valid even though `Array.prototype.push` returns a number and the `Array.prototype.forEach` method expects a function with a return type of `void`.
+
+There is one other special case to be aware of, when a literal function definition has a `void` return type, that function must **not** return anything.
+
+```ts
+function f2(): void {
+  // @ts-expect-error
+  return true
+}
+
+const f3 = function (): void {
+  // @ts-expect-error
+  return true
+}
+```
