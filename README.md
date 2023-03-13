@@ -1,1 +1,1 @@
-﻿A record for my TypeScript handbook learning.
+﻿A record of my TypeScript learning from typescriptlang.org.
