@@ -1,6 +1,4 @@
-# 1
-
-## Everyday Types
+# Everyday Types
 
 ```ts
 /**

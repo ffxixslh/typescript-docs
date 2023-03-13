@@ -1,8 +1,6 @@
-# 3
+# More on Functions
 
-## More on Functions
-
-### Function Type Expressions
+## Function Type Expressions
 
 > The simplest way to describe a function is with a _function type expression_.
 
@@ -31,7 +29,7 @@ function greeter(fn: GreetFunction) {
 }
 ```
 
-### Call Signatures
+## Call Signatures
 
 If we want to describe something callable with properties, we can write a _call signature_ in an object type:
 
@@ -47,7 +45,7 @@ function doSomething(fn: DescribableFunction) {
 
 Note that the syntax is slightly different compared to a function type expression - use`:` between the parameter list and the return type rather than `=>`.
 
-### Construct Signatures
+## Construct Signatures
 
 JavaScript functions can also be invoked with the `new` operator. TypeScript refers to these as _constructors_ because they usually create a new object.
 
@@ -71,7 +69,7 @@ interface CallOrConstruct {
 }
 ```
 
-### Generic Functions
+## Generic Functions
 
 In TypeScript, _generics_ are used when we want to describe a correspondence between two values.
 
@@ -94,7 +92,7 @@ const n = firstElement([1, 2, 3])
 const u = firstElement([])
 ```
 
-### Inference
+## Inference
 
 Note that we didn't have to specify `T` in this sample. The type was _inferred_ - chosen automatically - by TypeScript.
 
@@ -115,7 +113,7 @@ const parsed = map(['1', '2', '3'], (n) => parseInt(n))
 
 Note that in this sample, TypeScript could infer both the type of the `Input` type parameter (from the given `string` array), as well as the `Output` type parameter based on the return value of the function expression (`number`).
 
-### Constraints
+## Constraints
 
 Sometimes we want to relate two values but can only operate on a certain subset of values. In this case, we can use a _constraint_ to limit the kinds of types that a type parameter can accept.
 
@@ -138,7 +136,7 @@ const longerString = longest('alice', 'bob')
 const notOK = longest(10, 100)
 ```
 
-### Working with Constrained Values
+## Working with Constrained Values
 
 Here's a common error when working with generic constraints:
 
@@ -171,7 +169,7 @@ const arr = minimumLength([1, 2, 3], 6)
 console.log(arr.slice(0))
 ```
 
-### Specifying Type Arguments
+## Specifying Type Arguments
 
 TypeScript can't always infer the intended type arguments in a generic call.
 
@@ -194,11 +192,11 @@ If you intended to do this, however, you could manually specify the `Type`:
 const arr = combine<string | number>([1, 2, 3], ['hello'])
 ```
 
-### Guidelines for Writing Good Generic Functions
+## Guidelines for Writing Good Generic Functions
 
 > Writing generic functions is fun, and it can be easy to get carried away with type parameters. Having too many type parameters or using constraints where they aren't needed can make inference less successful, frustrating callers of your function.
 
-#### Push Type Parameters Down
+### Push Type Parameters Down
 
 > Rule: When possible, use the type parameters itself rather than constraining it.
 
@@ -219,7 +217,7 @@ const b = firstElement2([1, 2, 3])
 
 These might seem identical at first glance, but `firstElement1` is a much better way to write this function. Its inferred return type is `Type`, but `firstElement2`'s inferred return is `any` because TypeScript has to resolve the `arr[0]` expression using the constraint type, rather than 'waiting' to resolve the element during a call.
 
-#### Use Fewer Type Parameters
+### Use Fewer Type Parameters
 
 > Always use as few type parameters as possible.
 
@@ -240,7 +238,7 @@ function filter2<Type, Func extends (arg: Type) => boolean>(
 
 We've created a type parameter `Func` that _doesn't relate two values_. That's always a red flag because it means callers wanting to specify type arguments have to manually specify an extra type argument for no reason. `Func` doesn't do anything but make function harder to read and reason about!
 
-#### Type Parameters Should Appear Twice
+### Type Parameters Should Appear Twice
 
 > If a type parameter only appears in one location, strongly reconsider if you actually need it.
 
@@ -264,7 +262,7 @@ function greet(s: string) {
 
 Remember, type parameters are for _relating the types of multiple values_. If a type parameter is only used once in the function signature, it's not relating anything.
 
-### Optional Parameters
+## Optional Parameters
 
 Functions in JavaScript often take a variable number of arguments. We can model this in TypeScript by marking the parameter as _optional_ with `?`:
 
@@ -297,7 +295,7 @@ f(10)
 f(undefined)
 ```
 
-### Optional Parameters in Callbacks
+## Optional Parameters in Callbacks
 
 > When writing a function type for a callback, _never_ write an optional parameter unless you intend to _call_ the function without passing that argument.
 
@@ -334,7 +332,7 @@ myForEach([1, 2, 3], (a, i) => {
 
 In JavaScript, if you call a function with more arguments than there are parameters, the extra arguments are simply ignored. TypeScript behaves the same way. Functions with fewer parameters (of the same types) can always take the place of functions with more parameters
 
-### Function Overloads
+## Function Overloads
 
 In TypeScript, we can specify a function that can be called in different ways by writing _overload signatures_. To do this, write some number of function signatures (usually two or more), followed by the body of the function:
 
@@ -358,7 +356,7 @@ const d2 = makeDate(1, 3)
 
 Then, we wrote a function implementation with a compatible signature, **Functions have an _implementation_ signature**, but this signature can't be called directly. Even though we wrote a function with two optional parameters after the required one, it can't be called with two parameters!
 
-### Overload Signatures and the Implementation Signature
+## Overload Signatures and the Implementation Signature
 
 This is a comment source of confusion. Often people will write code like this and not understand why there is an error:
 
@@ -388,7 +386,7 @@ function fn(x: string): void
 function fn(x: boolean) {}
 ```
 
-### Writing Good Overloads
+## Writing Good Overloads
 
 > Always prefer parameters with union types instead of overloads when possible
 
@@ -422,7 +420,7 @@ function len(x: any[] | string) {
 
 This is much better! Callers can invoke this with either sort of value, and as an added bonus, we don't have to figure out a correct implementation signature.
 
-### Declaring `this` in a function
+## Declaring `this` in a function
 
 TypeScript will infer what the `this` should be in a function via code flow analysis, for example in the following:
 
@@ -464,9 +462,9 @@ const admins = db.filterUsers(() => this.admin)
 // Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
 ```
 
-### Other Types to Know About
+## Other Types to Know About
 
-#### void
+### void
 
 `void` represents the return value of functions which don't return a value.
 
@@ -474,13 +472,13 @@ In JavaScript, a function that doesn't return any value will implicitly return t
 
 > `void` is not the same as `undefined`.
 
-#### object
+### object
 
 The special type `object` refers to any value that isn't a primitive(`string`, `number`, `boolean`, `symbol`, `null`, or `undefined`). This is different from the _empty_ type `{}`, and also different from the global type `Object`. It's very likely you will never use `Object`.
 
 > `object` is not `Object`. _Always_ use `object`!
 
-#### unknown
+### unknown
 
 The `unknown` type represents _any_ value. This is similar to `any` type, but is safer because it's not legal to do anything with an `unknown` value:
 
@@ -498,13 +496,13 @@ function f2(a: unknown) {
 
 This is useful when describing function types because you can describe functions that accept any value without having `any` values in your function body.
 
-#### never
+### never
 
 the `never` type represents values which are _never_ observed. In a return type, this means that the function throw an exception or terminates execution fof the program.
 
 **`never` also appears when TypeScript determines there's nothing left in a union.**
 
-#### Function
+### Function
 
 The global type `Function` describes properties like `bind`, `call`, `apply`, and others present on all function values in JavaScript. it also has the special property that values of the `Function` can always be called; these calls return `any`.
 
@@ -516,7 +514,7 @@ function doSomething(f: Function) {
 // Use `() => void` is more safer than `Function`.
 ```
 
-### Rest Parameters and Arguments
+## Rest Parameters and Arguments
 
 ### Rest Parameters
 
@@ -534,7 +532,7 @@ const a = multiply(10, 1, 2, 3, 4)
 
 In TypeScript, the type annotation on these parameters is implicitly `any[]` instead of `any`, and any type annotation given must be of the form `Array<T>` or `T[]`, or a tuple type.
 
-#### Rest Arguments
+### Rest Arguments
 
 TypeScript does not assume that arrays are immutable. This can lead to some surprising behavior:
 
@@ -558,7 +556,7 @@ const angle = Math.atan2(...args)
 
 Using rest arguments may require turning on downlevelIteration when targeting older runtimes.
 
-### Parameter Destructuring
+## Parameter Destructuring
 
 You can use parameter destructuring to conveniently unpack objects provided as an argument into one or more local variables in the function body. In JavaScript, it looks like this:
 
@@ -587,9 +585,9 @@ function sum({ a, b, c }: ABC) {
 }
 ```
 
-### Assignability of Functions
+## Assignability of Functions
 
-#### Return type `void`
+### Return type `void`
 
 Contextual typing with a return type of `void` does **not** force functions to **not** return something. Another way to say this is a contextual function type with a `void` return type (`type vf = () => void`), when implemented, can return _any_ other value, but it will be ignored.
 

@@ -1,12 +1,10 @@
-# 4
+# Object Types
 
-## Object Types
-
-### Property Modifiers
+## Property Modifiers
 
 Each property in an object type can specify a couple of things: the type, whether the property is optional, and whether the property can be written to.
 
-#### Optional Properties
+### Optional Properties
 
 Much of the time, we’ll find ourselves dealing with objects that _might_ have a property set. In those cases, we can mark those properties as _optional_ by adding a question mark (`?`) to the end of their names.
 
@@ -37,7 +35,7 @@ can
 
 > Note that there is currently no way to place type annotations within destructuring patterns. This is because the following syntax already means something different in JavaScript.
 
-#### `readonly` Properties
+### `readonly` Properties
 
 Properties can also be marked as `readonly` for TypeScript.
 While it won’t change any behavior at runtime, a property marked as `readonly` can’t be written to during type-checking.
@@ -86,7 +84,7 @@ writablePerson.age++
 console.log(readonlyPerson.age) // prints '43'
 ```
 
-#### Index Signatures
+### Index Signatures
 
 Sometimes you don’t know all the names of a type’s properties ahead of time, but you do know the shape of the values.
 
@@ -130,7 +128,7 @@ interface NumberOrStringDictionary {
 
 You can also make index signatures `readonly` in order to prevent assignment to their indices.
 
-### Extending Types
+## Extending Types
 
 The `extends` keyword on an `interface` allows us to effectively copy members from other named types, and add whatever new members we want.
 
@@ -153,7 +151,7 @@ const cc: ColorfulCircle = {
 }
 ```
 
-### Intersection Types
+## Intersection Types
 
 TypeScript provides another construct called _intersection types_ that is mainly used to combine existing object types.
 
@@ -171,11 +169,11 @@ interface Circle {
 type ColorfulCircle = Colorful & Circle
 ```
 
-### Interfaces vs. Intersection
+## Interfaces vs. Intersection
 
 The principle difference between the two is how conflicts are handled, and that difference is typically one of the main reasons why you'd pick one over the other between an interface and a type alias of an intersection type.
 
-### Generic Object Types
+## Generic Object Types
 
 We can make a generic `Box` type which declares a _type parameter_ to contain more types.
 
@@ -205,7 +203,7 @@ type OneOrManyOrNull<Type> = OrNull<OneOrMany<Type>>
 type OneOrManyOrNullStrings = OneOrManyOrNUll<string>
 ```
 
-### The `Array` Type
+## The `Array` Type
 
 Whenever we write out types like `number[]` or `string[]`, that's really just a shorthand for `Array<number>` and `Array<string>`.
 
@@ -225,7 +223,7 @@ Much like the `Box` type above, `Array` itself is a generic type.
 
 Modern JavaScript also provides other data structures which are generic, like `Map<K, V>`, `Set<T>`, and `Promise<T>`. All this really means is that because of how `Map`, `Set`, and `Promise` behave, they can work with any sets of types.
 
-### The `ReadonlyArray` Type
+## The `ReadonlyArray` Type
 
 The `ReadonlyArray` is a special type that describes arrays that shouldn't be changed.
 
@@ -248,7 +246,7 @@ Unlike `Array`, there isn't a `ReadonlyArray` constructor that we can use.
 
 Just as TypeScript provides a shorthand syntax for `Array<Type>` with Type[], it also provides a shorthand syntax for `ReadonlyArray<Type>` with readonly Type[].
 
-#### Tuple Types
+## Tuple Types
 
 A _tuple type_ is another sort of `Array` type that knows exactly how many elements it contains, and exactly which types it contains at specific positions.
 
@@ -329,7 +327,7 @@ function readButtonInput(name: string, version: number, ...input: boolean[]) {
 
 This is handy when you want to take a variable number of arguments with a rest parameter, and you need a minimum number of elements, but you don’t want to introduce intermediate variables.
 
-### `readonly` Tuple Types
+## `readonly` Tuple Types
 
 One final note about tuple types - tuples types have readonly variants, and can be specified by sticking a readonly modifier in front of them - just like with array shorthand syntax.
 

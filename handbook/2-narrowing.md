@@ -1,6 +1,4 @@
-# 2
-
-## Narrowing
+# Narrowing
 
 > Much like how TypeScript analyzes runtime values using static types, it overlays type analysis on JavaScript’s runtime control flow constructs like `if/else`, conditional ternaries, loops, truthiness checks, etc., which can all affect those types.
 
@@ -28,7 +26,7 @@ function padLeft(padding: number | string, input: string) {
 
 TypeScript warning us that adding a `number | string` to `number` might not give us what we want. In other words, we haven't explicitly checked if `padding` is a `number` first, nor are we handling the case where it's a `string`.
 
-### Typeof Type Guard
+## Typeof Type Guard
 
 ```ts
 function padLeft(padding: number | string, input: string) {
@@ -66,7 +64,7 @@ But fortunately, TypeScript let us know that `strs` was only narrowed down to `s
 
 This might be a good segue into what we'll call "truthiness" checking.
 
-### Truthiness narrowing
+## Truthiness narrowing
 
 In JavaScript, constructs like `if` first “coerce” their conditions to `boolean`s to make sense of them, and then choose their branches depending on whether the result is `true` or `false`.
 
@@ -118,7 +116,7 @@ We wrapped the entire body of the function in a truthy check, but this has a sub
 
 TypeScript can often help you catch bugs early on, but if you choose to do _nothing_ with a value, there's only so much that it can do without being overly prescriptive.
 
-### Equality narrowing
+## Equality narrowing
 
 TypeScript also uses `switch` statements and equality checks like `===`, `!==`, `==`, and `!=` to narrow types.
 
@@ -177,7 +175,7 @@ function multiplyValue(container: Container, factor: number) {
 }
 ```
 
-### The "in" operator narrowing
+## The "in" operator narrowing
 
 JavaScript has an operator for determining if an object has a property with a name: the `in` operator. TypeScript takes this into account as a way to narrow down potential types.
 
@@ -196,7 +194,7 @@ function move(animal: Fish | Bird | Human) {
 }
 ```
 
-### Instanceof narrowing
+## Instanceof narrowing
 
 JavaScript has an operator for checking whether or not a value is an “instance” of another value. More specifically, in JavaScript `x instanceof Foo` checks whether the *prototype chain* of `x` contains `Foo.prototype`. While we won’t dive deep here, and you’ll see more of this when we get into classes, they can still be useful for most values that can be constructed with `new`. As you might have guessed, `instanceof` is also a type guard, and TypeScript narrows in branches guarded by `instanceof`s.
 
@@ -210,7 +208,7 @@ function logValue(x: Date | string) {
 }
 ```
 
-### Assignments
+## Assignments
 
 When we assign to any variable, TypeScript looks at the right side of the assignment and narrows the left side appropriately.
 
@@ -232,7 +230,7 @@ x = true
 console.log(x)
 ```
 
-### Control Flow Analysis
+## Control Flow Analysis
 
 When TypeScript encounters the `if` block, it will see whether there is a variable that includes one of the given types, then the rest of the body will remove the type from which variable is in the `if` block.
 
@@ -269,7 +267,7 @@ function example() {
 }
 ```
 
-### Using type predicates
+## Using type predicates
 
 A predicate takes the form `parameterName is Type`, where `parameterName` must be the name of a parameter from the current function signature.
 
@@ -334,7 +332,7 @@ const underWater3: Fish[] = zoo.filter((pet): pet is Fish => {
 })
 ```
 
-### Discriminated Unions
+## Discriminated Unions
 
 > When every type in a union contains a common property with literal types, TypeScript considers that to be a _discriminated union_, and can narrow out the members of the union.
 
@@ -421,7 +419,7 @@ function handleShape(shape: Shape) {
 
 Communicating the right information to TypeScript - that `Circle` and `Square` were really two separate types with specific `kind` fields - was crucial.
 
-### The never type
+## The never type
 
 When narrowing, you can reduce the options of a union to a point where you have removed all possibilities and have nothing left. In those cases, TypeScript will use a never type to represent a state which shouldn’t exist.
 
@@ -431,7 +429,7 @@ function error(message: string): never {
 }
 ```
 
-### Exhaustiveness checking
+## Exhaustiveness checking
 
 The never type is assignable to every type; however, no type is assignable to never (except never itself). This means you can use narrowing and rely on never turning up to do exhaustive checking in a switch statement.
 
